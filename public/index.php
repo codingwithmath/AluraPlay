@@ -1,23 +1,40 @@
 <?php
 
+use Alura\Mvc\Controller\{
+    Controller,
+    CreateVideoController,
+    DeleteVideoController,
+    FormVideoController,
+    UpdateVideoController,
+    ReadVideoController
+};
+use Alura\Mvc\Repository\VideoRepository;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$dbPath = __DIR__ . '/../banco.sqlite';
+$pdo = new PDO("sqlite:$dbPath");
+$videoRepository = new VideoRepository($pdo);
+
+/** @var Controller $controller */
+
 if ($_SERVER["PATH_INFO"] === '/' || !array_key_exists("PATH_INFO" ,$_SERVER)) {
-    require_once __DIR__ . '/../listagem-videos.php';
+    $controller = new ReadVideoController($videoRepository);
 } elseif ($_SERVER["PATH_INFO"] === '/novo-video') {
     if ($_SERVER["REQUEST_METHOD"] === 'GET') {
-        require_once __DIR__ . '/../formulario.php';
+        $controller = new FormVideoController($videoRepository);
     } elseif ($_SERVER["REQUEST_METHOD"] === 'POST') {
-        require_once __DIR__ . '/../novo-video.php';
-
+        $controller = new CreateVideoController($videoRepository);
     }
 } elseif ($_SERVER["PATH_INFO"] === '/editar-video') {
     if ($_SERVER["REQUEST_METHOD"] === 'GET') {
-        require_once __DIR__ . '/../formulario.php';
+        $controller = new FormVideoController($videoRepository);
     } elseif ($_SERVER["REQUEST_METHOD"] === 'POST') {
-        require_once __DIR__ . '/../editar-video.php';
-
+        $controller = new UpdateVideoController($videoRepository);
     }
 } elseif ($_SERVER["PATH_INFO"] === '/remover-video') {
-        require_once __DIR__ . '/../remover-video.php';
+       $controller = new DeleteVideoController($videoRepository);
 } else {
     http_response_code(404);
 }
+$controller->processRequest();
