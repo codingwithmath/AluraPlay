@@ -10,7 +10,7 @@
 
 :bulb: Run the server on the command line just typing the following command:
 ```
-php -S 0.0.0.0:8000
+php -S 0.0.0.0:8000 -t /public
 ```
 After that it will show at the terminal something like that:
 ```
